@@ -12,7 +12,7 @@ services:
       MYSQL_PASSWORD: root
       MYSQL_ROOT_PASSWORD: root
     volumes:
-      - c:\disruo\admin\db:/var/lib/mysql
+      - c:\disrup\admin\db:/var/lib/mysql
     ports:
       - "33061:3306"
     networks:
