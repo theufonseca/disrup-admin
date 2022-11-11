@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+
+  dbdisrup:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    restart: always
+    environment:
+      MYSQL_DATABASE: disrup
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - c:\disruo\admin\db:/var/lib/mysql
+    ports:
+      - "33061:3306"
+    networks:
+      - disrup
+
+networks:
+  disrup:
+    driver: bridge
