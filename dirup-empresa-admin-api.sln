@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dirup-empresa-admin-api", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{7B0ABF7F-9577-4A04-851B-18B7988ACA6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infra", "Infra\Infra.csproj", "{7CD4314E-352E-45A8-8533-881E643EB803}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infra", "Infra\Infra.csproj", "{7CD4314E-352E-45A8-8533-881E643EB803}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
