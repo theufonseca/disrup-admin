@@ -29,7 +29,7 @@ namespace Domain.UseCases.NewCompanyPhoto
         private readonly ICompanyPhotoService companyPhotoService;
         private readonly ICompanyNotificationService notificationService;
 
-        public NewCompanyPhotoRequestHandler(IPhotoStorageService photoStorageService, 
+        public NewCompanyPhotoRequestHandler(IPhotoStorageService photoStorageService,
             ICompanyPhotoService companyPhotoService, ICompanyNotificationService notificationService)
         {
             this.photoStorageService = photoStorageService;
@@ -39,27 +39,37 @@ namespace Domain.UseCases.NewCompanyPhoto
 
         public async Task<NewCompanyPhotoResponse> Handle(NewCompanyPhotoRequest request, CancellationToken cancellationToken)
         {
-            if (!Exists(request.CompleteLocalStoredPath, request.FileName)) 
+            Task resetThumbTask;
+            if (!Exists(request.CompleteLocalStoredPath, request.FileName))
                 throw new ArgumentException("File not found");
 
-            var mediaLink = await photoStorageService.Save(request.CompleteLocalStoredPath, request.FileName);
+            var mediaLinkTask = photoStorageService.Save(request.CompleteLocalStoredPath, request.FileName);
 
+            if (request.IsThumb)
+            {
+                resetThumbTask = companyPhotoService.ResetThumb(request.CompanyId);
+                await Task.WhenAll(resetThumbTask, mediaLinkTask);
+            }
+            else 
+                await Task.WhenAll(mediaLinkTask);
+            
             var photo = new Photo
             {
                 CompanyId = request.CompanyId,
-                IsThumb = request.IsThumb,
                 Name = request.FileName,
-                Url = mediaLink,
+                Url = mediaLinkTask.Result,
                 CreateDate = DateTime.Now
             };
 
+            photo.SetIsThumb(request.IsThumb);
             await companyPhotoService.AddPhoto(photo);
+
             await notificationService.NotifyCompanyChanges(CompanyNotificationStatus.Updated, request.CompanyId);
 
             return new NewCompanyPhotoResponse { Sucess = true };
         }
 
-        private bool Exists(string completePath, string fileName) => 
+        private bool Exists(string completePath, string fileName) =>
             File.Exists(Path.Combine(completePath, fileName));
     }
 }

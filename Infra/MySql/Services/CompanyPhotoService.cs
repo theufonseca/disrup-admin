@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Infra.MySql.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -38,14 +39,27 @@ namespace Infra.MySql.Services
             throw new NotImplementedException();
         }
 
-        public Task<Photo> GetPhotoBydId(int id)
+        public async Task<Photo> GetPhotoBydId(int id)
         {
-            throw new NotImplementedException();
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var photo = await dataContext.Photo.FirstOrDefaultAsync(x => x.Id == id);
+
+            return mapper.Map<Photo>(photo);
         }
 
-        public Task<IEnumerable<Photo>> GetPhotoList(int companyId)
+        public async Task<IEnumerable<Photo>> GetPhotoList(int companyId)
         {
-            throw new NotImplementedException();
+            List<Photo> photos = new();
+
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+            var photosModel = dataContext.Photo.Where(x => x.CompanyId == companyId).ToList();
+
+            photos.AddRange(photosModel.Select(x => mapper.Map<Photo>(x)));
+
+            return await Task.FromResult(photos);
         }
 
         public Task<Photo> GetThumbPhoto(int companyId)
@@ -53,9 +67,30 @@ namespace Infra.MySql.Services
             throw new NotImplementedException();
         }
 
-        public Task UpdatePhoto(Photo photo)
+        public async Task ResetThumb(int companyId)
         {
-            throw new NotImplementedException();
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var photos = dataContext.Photo.Where(x => x.CompanyId == companyId).ToList();
+            foreach (var item in photos)
+            {
+                item.IsThumb = false;
+                dataContext.Photo.Update(item);
+            }
+
+            await dataContext.SaveChangesAsync();
+        }
+
+        public async Task UpdatePhoto(Photo photo)
+        {
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var photoModel = mapper.Map<PhotoModel>(photo);
+            dataContext.Photo.Update(photoModel);
+
+            await dataContext.SaveChangesAsync();
         }
     }
 }

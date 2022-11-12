@@ -1,5 +1,7 @@
 ﻿using dirup_empresa_admin_api.Models;
+using Domain.UseCases.GetAllCompanyPhotos;
 using Domain.UseCases.NewCompanyPhoto;
+using Domain.UseCases.UpdateCompanyThumb;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +50,22 @@ namespace dirup_empresa_admin_api.Controllers
 
             System.IO.File.Delete(pathWithFileName);
 
+            return Ok(result);
+        }
+
+        [HttpGet("{companyId}")]
+        public async Task<IActionResult> Get(int companyId)
+        {
+            var request = new GetAllCompanyPhotosRequest { CompanyId = companyId };
+            var result = await mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpPut("{photoId}")]
+        public async Task<IActionResult> Update(int photoId)
+        {
+            var request = new UpdateCompanyThumbRequest { PhotoId = photoId };
+            var result = await mediator.Send(request);
             return Ok(result);
         }
 

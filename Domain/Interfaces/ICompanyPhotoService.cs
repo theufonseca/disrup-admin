@@ -15,5 +15,6 @@ namespace Domain.Interfaces
         Task<Photo> GetThumbPhoto(int companyId);
         Task<Photo> GetPhotoBydId(int id);
         Task<IEnumerable<Photo>> GetPhotoList(int companyId);
+        Task ResetThumb(int companyId);
     }
 }
