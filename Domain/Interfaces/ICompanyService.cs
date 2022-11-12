@@ -15,7 +15,7 @@ namespace Domain.Interfaces
         Task Delete(int id);
         Task<IEnumerable<Company>> GetAll();
         Task<IEnumerable<Company>> GetByStatus(CompanyStatus companyStatus);
-        Task<Company> GetById(int id);
+        Task<Company?> GetById(int id);
         Task<bool> Exists(string document);
     }
 }

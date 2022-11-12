@@ -49,6 +49,12 @@ namespace Domain.Entities
 
         public void SetCreateDate() => CreateDate = DateTime.Now;
 
+        public void CopyToUpdate(Company newCompany)
+        {
+            newCompany.CreateDate = CreateDate;
+            newCompany.Status = Status;
+        }
+
         public void AddPhoto(Photo photo)
         {
             if (Photos is null)
@@ -91,5 +97,7 @@ namespace Domain.Entities
             if (!expectedLength.Any(x => x == Phone.Length))
                 throw new PhoneFormatException(Phone, Phone.Length, expectedLength.ToList());
         }
+
+        
     }
 }

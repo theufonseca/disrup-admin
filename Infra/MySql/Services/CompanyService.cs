@@ -39,19 +39,48 @@ namespace Infra.MySql.Services
             return company != null;
         }
 
-        public Task<IEnumerable<Company>> GetAll()
+        public async Task<IEnumerable<Company>> GetAll()
         {
-            throw new NotImplementedException();
+            List<Company> companies = new();
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var companiesModel = await dataContext.Company.Include(x => x.Photos).ToListAsync();
+
+            if(companiesModel is not null && companiesModel.Any())
+                companies.AddRange(companiesModel.Select(x => mapper.Map<Company>(x)));
+
+            return companies;
         }
 
-        public Task<Company> GetById(int id)
+        public async Task<Company?> GetById(int id)
         {
-            throw new NotImplementedException();
+            Company? company = null;
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var companyModel = await dataContext.Company.Where(x => x.Id == id)
+                .Include(x => x.Photos).FirstOrDefaultAsync();
+
+            if (companyModel != null)
+                company = mapper.Map<Company>(companyModel);
+
+            return company;
         }
 
-        public Task<IEnumerable<Company>> GetByStatus(CompanyStatus companyStatus)
+        public async Task<IEnumerable<Company>> GetByStatus(CompanyStatus companyStatus)
         {
-            throw new NotImplementedException();
+            List<Company> companies = new();
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var companiesModel = await dataContext.Company.Where(x => x.Status == companyStatus)
+                .Include(x => x.Photos).ToListAsync();
+
+            if(companiesModel is not null && companiesModel.Any())
+                companies.AddRange(companiesModel.Select(x => mapper.Map<Company>(x)));
+
+            return companies;
         }
 
         public async Task<int> Insert(Company company)
@@ -70,9 +99,15 @@ namespace Infra.MySql.Services
             return companyModel.Id;
         }
 
-        public Task Update(Company company)
+        public async Task Update(Company company)
         {
-            throw new NotImplementedException();
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var companyModel = mapper.Map<CompanyModel>(company);
+
+            dataContext.Company.Update(companyModel);
+            await dataContext.SaveChangesAsync();
         }
     }
 }
