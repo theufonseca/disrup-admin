@@ -9,5 +9,6 @@ namespace Domain.Interfaces
     public interface IPhotoStorageService
     {
         Task<string> Save(string completeFilePath, string photoName);
+        Task Delete(string fileName);
     }
 }

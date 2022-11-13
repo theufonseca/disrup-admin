@@ -34,9 +34,15 @@ namespace Infra.MySql.Services
             await dataContext.SaveChangesAsync();
         }
 
-        public Task DeletePhoto(int id)
+        public async Task DeletePhoto(int id)
         {
-            throw new NotImplementedException();
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var photo = await dataContext.Photo.FirstOrDefaultAsync(x => x.Id == id);
+
+            dataContext.Photo.Remove(photo);
+            await dataContext.SaveChangesAsync();
         }
 
         public async Task<Photo> GetPhotoBydId(int id)

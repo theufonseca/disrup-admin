@@ -18,5 +18,8 @@ namespace Infra.Storage.Services
 
         public async Task<string> Save(string completeFilePath, string photoName)
             => await googleCloudStorage.UploadFileAsync(completeFilePath, photoName);        
+
+        public async Task Delete(string fileName) => await googleCloudStorage.DeleteFileAsync(fileName);
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Enums;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using MediatR;
@@ -23,10 +24,12 @@ namespace Domain.UseCases.UpdateCompany
     public class UpdateCompanyRequestHandler : IRequestHandler<UpdateCompanyRequest, UpdateCompanyResponse>
     {
         private readonly ICompanyService companyService;
+        private readonly ICompanyNotificationService companyNotificationService;
 
-        public UpdateCompanyRequestHandler(ICompanyService companyService)
+        public UpdateCompanyRequestHandler(ICompanyService companyService, ICompanyNotificationService companyNotificationService)
         {
             this.companyService = companyService;
+            this.companyNotificationService = companyNotificationService;
         }
 
         public async Task<UpdateCompanyResponse> Handle(UpdateCompanyRequest request, CancellationToken cancellationToken)
@@ -38,10 +41,21 @@ namespace Domain.UseCases.UpdateCompany
 
             company.ValidateMandatoryData();
             company.ValidatePatternData();
+            
+            var currentCompany = await companyService.GetById((int)company.Id);
+            var existsDocument = await companyService.Exists(company.Document);
 
-            var currentCompany = await companyService.GetById(Convert.ToInt32(company.Id));
+            if (currentCompany is null)
+                throw new ArgumentException("Company not found");
+
+            currentCompany.CopyToUpdate(company);
+
+            if (existsDocument && currentCompany.Document != company.Document)
+                throw new ArgumentException("This document already exists");
 
             await companyService.Update(company);
+
+            await companyNotificationService.NotifyCompanyChanges(CompanyNotificationStatus.Updated, (int)company.Id);
 
             return new UpdateCompanyResponse
             {

@@ -23,9 +23,18 @@ namespace Infra.MySql.Services
             this.mapper = mapper;
             this.serviceScopeFactory = serviceScopeFactory;
         }
-        public Task Delete(int id)
+        public async Task Delete(int id)
         {
-            throw new NotImplementedException();
+            using var scope = serviceScopeFactory.CreateScope();
+            var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+            var company = await dataContext.Company.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (company == null)
+                return;
+
+            dataContext.Company.Remove(company);
+            await dataContext.SaveChangesAsync();
         }
 
         public async Task<bool> Exists(string document)

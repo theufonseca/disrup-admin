@@ -1,4 +1,6 @@
 ﻿using dirup_empresa_admin_api.Models;
+using Domain.UseCases.DeleteCompany;
+using Domain.UseCases.DeletePhoto;
 using Domain.UseCases.GetAllCompanyPhotos;
 using Domain.UseCases.NewCompanyPhoto;
 using Domain.UseCases.UpdateCompanyThumb;
@@ -65,6 +67,14 @@ namespace dirup_empresa_admin_api.Controllers
         public async Task<IActionResult> Update(int photoId)
         {
             var request = new UpdateCompanyThumbRequest { PhotoId = photoId };
+            var result = await mediator.Send(request);
+            return Ok(result);
+        }
+
+        [HttpDelete("{photoId}")]
+        public async Task<IActionResult> Delete(int photoId)
+        {
+            var request = new DeletePhotoRequest { PhotoId = photoId };
             var result = await mediator.Send(request);
             return Ok(result);
         }
