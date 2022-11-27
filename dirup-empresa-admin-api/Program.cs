@@ -7,7 +7,21 @@ using Infra.Storage.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyOrigin();
+                          policy.AllowAnyMethod();
+                          policy.AllowAnyHeader();
+                      });
+});
+
 
 // Add services to the container.
 builder.Services.AddMediatR(AppDomain.CurrentDomain.GetAssemblies());
@@ -38,6 +52,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseExceptionHandler("/error");
 
