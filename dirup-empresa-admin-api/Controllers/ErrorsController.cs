@@ -17,9 +17,12 @@ namespace dirup_empresa_admin_api.Controllers
             var exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
             if (exception is ExceptionBase)
+            {
                 exceptionBase = (ExceptionBase)exception;
+                return Problem(title: exceptionBase.Title, detail: exceptionBase.Detail, statusCode: (int)HttpStatusCode.BadRequest);
+            }
 
-            return Problem(title: exceptionBase.Title, detail: exceptionBase.Detail, statusCode: (int)HttpStatusCode.BadRequest);
+            return Problem(title: "Unexpected Error", detail: exception.Message, statusCode: (int)HttpStatusCode.InternalServerError);
         }
     }
 }

@@ -44,6 +44,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.CreateTables();
+
 app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
