@@ -2,6 +2,7 @@
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.UseCases.CompanyFilter;
+using Infra.MySql.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -30,7 +31,10 @@ namespace Infra.MySql.Services
             var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
             var companiesModel = await dataContext.Company
-                .Where(x => (string.IsNullOrEmpty(filters.Name) || (x.Name.Contains(filters.Name) || x.FantasyName.Contains(filters.Name) || x.LegalName.Contains(filters.Name))))
+                .Where(x => 
+                    x.Status == Domain.Enums.CompanyStatus.ACTIVE &&
+                    (string.IsNullOrEmpty(filters.Name) || (x.Name.Contains(filters.Name) || x.FantasyName.Contains(filters.Name) || x.LegalName.Contains(filters.Name)))
+                 )
                 .Include(x => x.Photos)
                 .ToListAsync();
 
@@ -38,6 +42,19 @@ namespace Infra.MySql.Services
                 companies.AddRange(companiesModel.Select(x => mapper.Map<Company>(x)));
 
             return companies;
+        }
+    }
+
+    public static class CompanySearchExtension
+    {
+        public static IQueryable<CompanyModel> GetWhere(this DbSet<CompanyModel> Company, Filters filters)
+        {
+            //Company.Where(x => x.Status == Domain.Enums.CompanyStatus.ACTIVE);
+
+            if(!string.IsNullOrEmpty(filters.Name))
+                Company.Where(x => x.Name.Contains(filters.Name) || x.FantasyName.Contains(filters.Name) || x.LegalName.Contains(filters.Name));
+
+            return Company;
         }
     }
 }
