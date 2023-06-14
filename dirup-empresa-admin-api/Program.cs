@@ -31,6 +31,8 @@ builder.Services.AddSingleton<IPhotoStorageService, PhotoStorageService>();
 builder.Services.AddSingleton<ICompanyService, CompanyService>();
 builder.Services.AddSingleton<ICompanyPhotoService, CompanyPhotoService>();
 builder.Services.AddSingleton<ICompanyNotificationService, CompanyNotificationService>();
+builder.Services.AddSingleton<ICompanySearchService, CompanySearchService>();
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Default");
