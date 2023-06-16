@@ -37,6 +37,11 @@ namespace Infra.MySql.Models
         public string? DisrupIdeia { get; set; }
         public string? SocietyContribuition { get; set; }
         public string? WorkEnvironment { get; set; }
+        public string? Category1 { get; init; }
+        public string? Category2 { get; init; }
+        public string? Category3 { get; init; }
+        public string? Category4 { get; init; }
+        public string? Category5 { get; init; }
 
         public ICollection<PhotoModel> Photos { get; set; }
     }

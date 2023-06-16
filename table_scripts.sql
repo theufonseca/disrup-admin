@@ -24,6 +24,11 @@ Create table Company
     DisrupIdeia text,
     SocietyContribuition text,
     WorkEnvironment text,
+    Category1 varchar(50),
+    Category2 varchar(50),
+    Category3 varchar(50),
+    Category4 varchar(50),
+    Category5 varchar(50),
     primary key (Id)
 );
 

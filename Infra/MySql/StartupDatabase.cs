@@ -59,7 +59,7 @@ namespace Infra.MySql
 
         private static Dictionary<string, string> scripts = new Dictionary<string, string>
         {
-            { "Company", 
+            { "Company",
              @"
                 use disrup;
                 Create table Company
@@ -88,8 +88,13 @@ namespace Infra.MySql
                     DisrupIdeia text,
                     SocietyContribuition text,
                     WorkEnvironment text,
+                    Category1 varchar(50),
+                    Category2 varchar(50),
+                    Category3 varchar(50),
+                    Category4 varchar(50),
+                    Category5 varchar(50),
                     primary key (Id)
-                );" 
+                );"
             },
             { 
                 "Photo",

@@ -40,10 +40,13 @@ namespace Domain.Entities
         public string? DisrupIdeia { get; init; }
         public string? SocietyContribuition { get; init; }
         public string? WorkEnvironment { get; init; }
+        public string? Category1 { get; init; }
+        public string? Category2 { get; init; }
+        public string? Category3 { get; init; }
+        public string? Category4 { get; init; }
+        public string? Category5 { get; init; }
 
         public List<Photo>? Photos { get; private set; }
-
-        public bool HasPhotos() => Photos is not null && Photos.Any();
 
         public void SetStatus(CompanyStatus status) => this.Status = status;
 
