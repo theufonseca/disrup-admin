@@ -1,4 +1,5 @@
 using Domain.Interfaces;
+using Infra.Elasticsearch;
 using Infra.MySql;
 using Infra.MySql.Services;
 using Infra.RabbitMQ.Services;
@@ -6,6 +7,7 @@ using Infra.Storage;
 using Infra.Storage.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -37,6 +39,16 @@ builder.Services.AddDbContext<DataContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("Default");
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+});
+
+//Configure Elasticsearch
+ElasticsearchSettings.IndexName = builder.Configuration.GetSection("ElasticsearchSettings:IndexName").Value!;
+ElasticsearchSettings.Url = builder.Configuration.GetSection("ElasticsearchSettings:Url").Value!;
+
+builder.Services.AddSingleton<IElasticClient>(s =>
+{
+    var settings = new ConnectionSettings(new Uri(ElasticsearchSettings.Url));
+    return new ElasticClient(settings);
 });
 
 builder.Services.AddControllers();
